@@ -1,5 +1,5 @@
 let number = 5;
-let str = "문자열입력" // ""도 묶음 가능
+let str = '문자열입력' // ""도 묶음 가능
 let prime = 1.5123;
 let is_ok = true; // 참
 let is_not = false // 거짓
@@ -36,8 +36,8 @@ users.set("user2",{
 
 //Map 객체의 모든 사용자 정보 반복 출력
 for(const [username, user] of users){
-    console.log('사용자이름: ${username}','ID: ${user.id}');
-    console.log('비밀번호: ${user.password}');
+    console.log(`사용자이름: ${username}`,`ID: ${user.id}`);
+    console.log(`비밀번호: ${user.password}`);
 }
 
 // Set 객체 활용 (예), 이름만 저장할 Set 객체 생성
@@ -47,5 +47,5 @@ usernames.add("user2");
 
 // Set 객체의 모든 사용자 이름 반복 출력
 for (const username of usernames){
-    console.log('사용자 이름: ${username}');
+    console.log(`사용자 이름: ${username}`);
 }
