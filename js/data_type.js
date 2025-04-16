@@ -36,7 +36,7 @@ users.set("user2",{
 
 //Map 객체의 모든 사용자 정보 반복 출력
 for(const [username, user] of users){
-    console.log(`사용자이름: ${username}`,`ID: ${user.id}`);
+    console.log(`사용자이름: ${username}`,`ID: ${user.id}`); 
     console.log(`비밀번호: ${user.password}`);
 }
 
