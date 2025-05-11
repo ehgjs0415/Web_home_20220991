@@ -35,28 +35,75 @@ function setCookie(name, value, expiredays) {
     document.cookie = escape(name) + "=" + escape(value) + "; expires=" + date.toUTCString() + "; path=/";
 }
     
+// 수정된 getCookie 함수 (모든 이름 탐색 가능)
 function getCookie(name) {
     var cookie = document.cookie;
-    console.log("쿠키를 요청합니다.");
-    if (cookie != "") {
+    if (cookie !== "") {
         var cookie_array = cookie.split("; ");
-        for ( var index in cookie_array) {
-            var cookie_name = cookie_array[index].split("=");
-            if (cookie_name[0] == "id") {
-                return cookie_name[1];
+        for (let i in cookie_array) {
+            const [key, value] = cookie_array[i].split("=");
+            if (key === name) {
+                return unescape(value);
             }
         }
     }
-     return ;
+    return null;
 }
 
-function logout(){
-    session_del(); // 세션 삭제
-    location.href='../index.html';
+// 로그인 횟수 카운트 함수 추가
+function login_count() {
+    let count = parseInt(getCookie("login_cnt")) || 0;
+    count += 1;
+    setCookie("login_cnt", count, 7);
+    console.log("로그인 횟수:", count);
+}
+
+// 로그아웃 횟수 카운트 함수 추가
+function logout_count() {
+    let count = parseInt(getCookie("logout_cnt")) || 0;
+    count += 1;
+    setCookie("logout_cnt", count, 7);
+    console.log("로그아웃 횟수:", count);
+}
+
+// 로그인 실패 횟수 체크 및 알림
+function login_failed() {
+    let failCnt = parseInt(getCookie("login_fail_cnt")) || 0;
+    failCnt += 1;
+    setCookie("login_fail_cnt", failCnt, 1); // 하루 저장
+
+    if (failCnt >= 3) {
+        setCookie("login_block", "true", 0.003); // 약 4분 (0.003일)
+        alert("로그인 가능 횟수를 초과했습니다. 4분간 로그인할 수 없습니다.");
+    } else {
+        alert(`로그인 실패 (${failCnt}/3)`);
     }
-    
+}
+
+
+function logout() {
+    logout_count(); // 로그아웃 횟수 증가
+    session_del();  // 기존 세션 삭제
+    location.href = '../index.html';
+}
+
+function session_del() {
+    if (sessionStorage) {
+        sessionStorage.removeItem("Session_Storage_test");
+        alert("로그아웃 버튼 클릭 확인 : 세션 스토리지를 삭제합니다.");
+    } else {
+        alert("세션 스토리지 지원 x");
+    }
+}
+
     
 const check_input = () => {
+    // ✅ 로그인 차단 여부 먼저 확인
+    if (getCookie("login_block") === "true") {
+        alert("로그인 가능 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.");
+        return false;
+    }
+
     const loginForm = document.getElementById('login_form');
     const loginBtn = document.getElementById('login_btn');
     const emailInput = document.getElementById('typeEmailX');
@@ -79,47 +126,75 @@ const check_input = () => {
     if (emailValue === '') {
         alert('이메일을 입력하세요.');
         return false;
-        }
+    }
 
     if (passwordValue === '') {
         alert('비밀번호를 입력하세요.');
         return false;
-        }
+    }
 
     if (emailValue.length < 5)  {
         alert('아이디는 최소 5글자 이상 입력해야 합니다.');
         return false;
-        }
+    }
+
+
+    // 이메일은 최대 10자
+    if (emailValue.length > 10) {
+        alert('이메일은 10글자 이하여야 합니다.');
+        return false;
+    }
 
     if (passwordValue.length < 12) {
         alert('비밀번호는 반드시 12글자 이상 입력해야 합니다.');
         return false;
-        }
+    }
+
+
+    //  비밀번호는 최대 15자    
+    if (passwordValue.length > 15) {
+        alert('비밀번호는 15글자 이하여야 합니다.');
+        return false;
+    }
 
     const hasSpecialChar = passwordValue.match(/[!,@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/) !== null;
     if (!hasSpecialChar) {
         alert('패스워드는 특수문자를 1개 이상 포함해야 합니다.');
         return false;
-        }
+    }
 
     const hasUpperCase = passwordValue.match(/[A-Z]+/) !== null;
     const hasLowerCase = passwordValue.match(/[a-z]+/) !== null;
     if (!hasUpperCase || !hasLowerCase) {
         alert('패스워드는 대소문자를 1개 이상 포함해야 합니다.');
         return false;
-        }
+    }
 
+    //  반복된 문자열 (3자 이상) 금지
+    if (/(.+)\1{2,}/.test(emailValue) || /(.+)\1{2,}/.test(passwordValue)) {
+        alert('3글자 이상 반복되는 문자를 사용할 수 없습니다.');
+        return false;
+    }
+
+    // 연속된 숫자 2개 이상 반복 금지 (예: 1212, 123123 등)
+    if (/(\d{2,})\1+/.test(emailValue) || /(\d{2,})\1+/.test(passwordValue)) {
+        alert('연속된 숫자 2개 이상 반복 입력은 허용되지 않습니다.');
+        return false;
+    }
 
     if (!sanitizedEmail) {
         // Sanitize된 비밀번호 사용
         return false;
-        }
+    }
         
     if (!sanitizedPassword) {
         // Sanitize된 비밀번호 사용
         return false;
-        }
+    }
     
+    // ✅ 로그인 횟수 증가
+    login_count();
+
     // 검사 마무리 단계 쿠키 저장, 최하단 submit 이전
     if(idsave_check.checked == true) { // 아이디 체크 o
         alert("쿠키를 저장합니다.", emailValue);
@@ -130,7 +205,7 @@ const check_input = () => {
         setCookie("id", emailValue.value, 0); //날짜를 0 - 쿠키 삭제
     }
         
-            
+   
             
 
         console.log('이메일:', emailValue);
@@ -138,8 +213,7 @@ const check_input = () => {
 
         session_set(); // 세션 생성
         loginForm.submit();
-    };
-
+};
     document.getElementById("login_btn").addEventListener('click', check_input);
 
     
