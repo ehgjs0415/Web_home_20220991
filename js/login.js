@@ -9,6 +9,15 @@ function init(){ // 로그인 폼에 쿠키에서 가져온 아이디 입력
     }
     session_check(); // 세션 유무 검사
 }
+
+function init_logined(){
+    if(sessionStorage){
+        decrypt_text(); // 복호화 함수
+    }
+    else{
+        alert("세션 스토리지 지원 x");
+    }
+}
     
 const check_xss = (input) => {
     // DOMPurify 라이브러리 로드 (CDN 사용)
@@ -98,7 +107,7 @@ function session_del() {
 
     
 const check_input = () => {
-    // ✅ 로그인 차단 여부 먼저 확인
+    // 로그인 차단 여부 먼저 확인
     if (getCookie("login_block") === "true") {
         alert("로그인 가능 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.");
         return false;
@@ -122,7 +131,12 @@ const check_input = () => {
 
     // 전역 변수 추가, 맨 위 위치
     const idsave_check = document.getElementById('idSaveCheck');
-    
+    const payload = {
+            id: emailValue,
+            exp: Math.floor(Date.now() / 1000) + 3600 // 1시간 (3600초)
+    };
+    const jwtToken = generateJWT(payload);
+        
     if (emailValue === '') {
         alert('이메일을 입력하세요.');
         return false;
@@ -192,7 +206,7 @@ const check_input = () => {
         return false;
     }
     
-    // ✅ 로그인 횟수 증가
+    // 로그인 횟수 증가
     login_count();
 
     // 검사 마무리 단계 쿠키 저장, 최하단 submit 이전
@@ -212,6 +226,7 @@ const check_input = () => {
         console.log('비밀번호:', passwordValue);
 
         session_set(); // 세션 생성
+        localStorage.setItem('jwt_token', jwtToken);
         loginForm.submit();
 };
     document.getElementById("login_btn").addEventListener('click', check_input);
