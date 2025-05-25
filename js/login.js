@@ -93,6 +93,7 @@ function login_failed() {
 function logout() {
     logout_count(); // 로그아웃 횟수 증가
     session_del();  // 기존 세션 삭제
+    localStorage.removeItem("jwt_token"); // ✅ JWT 토큰 삭제, 11주차 응용문제 토큰 제거
     location.href = '../index.html';
 }
 
@@ -105,8 +106,8 @@ function session_del() {
     }
 }
 
-    
-const check_input = () => {
+// 11주차 세션 암호화 및 복호화 부분 응용문제에서 azync과 await 확인    
+const check_input = async () => {
     // 로그인 차단 여부 먼저 확인
     if (getCookie("login_block") === "true") {
         alert("로그인 가능 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.");
@@ -225,7 +226,8 @@ const check_input = () => {
         console.log('이메일:', emailValue);
         console.log('비밀번호:', passwordValue);
 
-        session_set(); // 세션 생성
+        // session_set(); // 세션 생성
+        await session_set(); // 기존 session_set → await 붙임, 11주차 응용문제 세션 암호화 및 복호화
         localStorage.setItem('jwt_token', jwtToken);
         loginForm.submit();
 };
