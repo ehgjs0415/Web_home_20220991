@@ -5,7 +5,7 @@ const ENCODE = new TextEncoder();
 const DECODE = new TextDecoder();
 
 // Key 유도 함수
-async function deriveKey() {
+export async function deriveKey() {
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
     ENCODE.encode(SECRET_KEY),
@@ -29,7 +29,7 @@ async function deriveKey() {
 }
 
 // 암호화 함수
-async function encryptTextGCM(plainText) {
+export async function encryptTextGCM(plainText) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await deriveKey();
 
@@ -49,7 +49,7 @@ async function encryptTextGCM(plainText) {
 }
 
 // 복호화 함수
-async function decryptTextGCM(data, iv) {
+export async function decryptTextGCM(data, iv) {
   const key = await deriveKey();
 
   const decrypted = await crypto.subtle.decrypt(
@@ -65,13 +65,13 @@ async function decryptTextGCM(data, iv) {
 }
 
 // 세션에 저장하는 함수 (로그인 시 호출)
-async function saveEncryptedPass2(password) {
+export async function saveEncryptedPass2(password) {
   const result = await encryptTextGCM(password);
   sessionStorage.setItem("Session_Storage_pass2", JSON.stringify(result));
 }
 
 // 세션에서 불러와 복호화 (로그인 후 페이지에서 호출)
-async function loadAndDecryptGCM() {
+export async function loadAndDecryptGCM() {
   const stored = sessionStorage.getItem("Session_Storage_pass2");
   if (!stored) {
     console.log("🔐 Session_Storage_pass2 없음");

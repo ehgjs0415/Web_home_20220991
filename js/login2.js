@@ -237,7 +237,9 @@ const check_input = async () => {
 };
     document.getElementById("login_btn").addEventListener('click', check_input);
     document.addEventListener('DOMContentLoaded', () => {
-        init();
+        checkAuth();
+        init_logined();
     });
+
 
     
