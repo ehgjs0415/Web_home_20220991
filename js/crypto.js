@@ -31,7 +31,37 @@ export function encrypt_text(password){
 export function decrypt_text(){
     const k = "key"; // 서버의 키
     const rk = k.padEnd(32, " "); // AES256은 key 길이가 32
-    const eb = session_get();
-    const b = decodeByAES256(rk, eb); // 실제 복호화
-    console.log(b);
+    const eb = session_get(); // 🔐 암호화된 문자열을 가져옴
+
+    if (!eb) {
+        console.warn("❌ 세션에서 암호화된 문자열 없음");
+        return null;
+    }
+
+    try {
+        const b = decodeByAES256(rk, eb); // 복호화
+        return b; // ✅ 반드시 반환
+    } catch (e) {
+        console.error("❌ 복호화 실패", e);
+        return null;
+    }
+}
+//12주차 회원가입 복호화
+export function decrypt_signup() {
+    const k = "key";
+    const rk = k.padEnd(32, " ");
+    const encrypted = sessionStorage.getItem("Session_Storage_encrypted");
+
+    if (!encrypted) {
+        console.warn("❌ 암호화된 회원가입 정보 없음");
+        return null;
+    }
+
+    try {
+        const decrypted = decodeByAES256(rk, encrypted);
+        return decrypted;
+    } catch (e) {
+        console.error("❌ 복호화 실패:", e);
+        return null;
+    }
 }

@@ -37,7 +37,7 @@ export function verifyJWT(token) { // 토큰 검증
     }
 }
 
-export function isAuthenticated() { // 사용자 인증 상태 확인
+function isAuthenticated() { // 사용자 인증 상태 확인
     const token = localStorage.getItem('jwt_token');
     if (!token) return false; // 토큰 없음
     const payload = verifyJWT(token);

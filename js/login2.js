@@ -1,8 +1,9 @@
 import { session_set, session_get, session_check } from './session.js';
-import { encrypt_text, decrypt_text } from './crypto.js';
+import { encrypt_text, decrypt_text, decrypt_signup } from './crypto.js';
 import { generateJWT, checkAuth } from './jwt_token.js';
+import { saveEncryptedPass2, loadAndDecryptGCM } from './crypto2.js';
 
-function init(){ // 로그인 폼에 쿠키에서 가져온 아이디 입력
+export function init(){ // 로그인 폼에 쿠키에서 가져온 아이디 입력
     const emailInput = document.getElementById('typeEmailX');
     const idsave_check = document.getElementById('idSaveCheck');
     let get_id = getCookie("id");
@@ -16,12 +17,19 @@ function init(){ // 로그인 폼에 쿠키에서 가져온 아이디 입력
 
 function init_logined(){
     if(sessionStorage){
-        decrypt_text(); // 복호화 함수
-    }
-    else{
+        decrypt_text(); // 기존 암호 문자열 복호화
+        // const storedObj = sessionStorage.getItem("Session_Storage_object");
+        // if (storedObj) {
+        //     const parsedObj = JSON.parse(storedObj);
+        //     console.log("✅ 회원가입 정보 복호화 결과:", parsedObj);
+        // } else {
+        //     console.log("⚠️ 회원가입 정보 세션 없음");
+        // }
+    } else {
         alert("세션 스토리지 지원 x");
     }
 }
+
     
 const check_xss = (input) => {
     // DOMPurify 라이브러리 로드 (CDN 사용)
@@ -94,7 +102,7 @@ function login_failed() {
 }
 
 
-function logout() {
+export function logout() {
     logout_count(); // 로그아웃 횟수 증가
     session_del();  // 기존 세션 삭제
     localStorage.removeItem("jwt_token"); // ✅ JWT 토큰 삭제, 11주차 응용문제 토큰 제거
@@ -103,12 +111,33 @@ function logout() {
 
 function session_del() {
     if (sessionStorage) {
-        sessionStorage.removeItem("Session_Storage_test");
+        sessionStorage.clear();
         alert("로그아웃 버튼 클릭 확인 : 세션 스토리지를 삭제합니다.");
     } else {
         alert("세션 스토리지 지원 x");
     }
 }
+//12주차 회원가입 응용문제
+function printDecryptedSignupObject() {
+  const encrypted = decrypt_signup();
+  console.log("🧩 복호화된 문자열:", encrypted); // 추가 디버깅
+  if (!encrypted) {
+    console.log("❌ 암호화된 회원가입 정보 없음");
+    return;
+  }
+
+  try {
+    const userObj = JSON.parse(encrypted);
+    console.log("✅ 복호화된 회원가입 정보:");
+    console.log("이름:", userObj.name);
+    console.log("이메일:", userObj.email);
+    console.log("비밀번호:", userObj.password);
+    console.log("비밀번호 확인:", userObj.re_password);
+  } catch (e) {
+    console.error("❌ JSON 파싱 실패:", e);
+  }
+}
+
 
 // 11주차 세션 암호화 및 복호화 부분 응용문제에서 azync과 await 확인    
 const check_input = async () => {
@@ -144,16 +173,19 @@ const check_input = async () => {
         
     if (emailValue === '') {
         alert('이메일을 입력하세요.');
+        login_failed();
         return false;
     }
 
     if (passwordValue === '') {
         alert('비밀번호를 입력하세요.');
+        login_failed();
         return false;
     }
 
     if (emailValue.length < 5)  {
         alert('아이디는 최소 5글자 이상 입력해야 합니다.');
+        login_failed();
         return false;
     }
 
@@ -161,11 +193,13 @@ const check_input = async () => {
     // 이메일은 최대 10자
     if (emailValue.length > 10) {
         alert('이메일은 10글자 이하여야 합니다.');
+        login_failed();
         return false;
     }
 
     if (passwordValue.length < 12) {
         alert('비밀번호는 반드시 12글자 이상 입력해야 합니다.');
+        login_failed();
         return false;
     }
 
@@ -173,41 +207,49 @@ const check_input = async () => {
     //  비밀번호는 최대 15자    
     if (passwordValue.length > 15) {
         alert('비밀번호는 15글자 이하여야 합니다.');
+        login_failed();
         return false;
     }
 
     const hasSpecialChar = passwordValue.match(/[!,@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/) !== null;
     if (!hasSpecialChar) {
         alert('패스워드는 특수문자를 1개 이상 포함해야 합니다.');
+        login_failed();
         return false;
     }
 
     const hasUpperCase = passwordValue.match(/[A-Z]+/) !== null;
     const hasLowerCase = passwordValue.match(/[a-z]+/) !== null;
+
     if (!hasUpperCase || !hasLowerCase) {
         alert('패스워드는 대소문자를 1개 이상 포함해야 합니다.');
+        login_failed();
         return false;
     }
 
     //  반복된 문자열 (3자 이상) 금지
     if (/(.+)\1{2,}/.test(emailValue) || /(.+)\1{2,}/.test(passwordValue)) {
         alert('3글자 이상 반복되는 문자를 사용할 수 없습니다.');
+        login_failed();
         return false;
     }
 
     // 연속된 숫자 2개 이상 반복 금지 (예: 1212, 123123 등)
     if (/(\d{2,})\1+/.test(emailValue) || /(\d{2,})\1+/.test(passwordValue)) {
         alert('연속된 숫자 2개 이상 반복 입력은 허용되지 않습니다.');
+        login_failed();
         return false;
     }
 
     if (!sanitizedEmail) {
         // Sanitize된 비밀번호 사용
+        login_failed();
         return false;
     }
         
     if (!sanitizedPassword) {
         // Sanitize된 비밀번호 사용
+        login_failed();
         return false;
     }
     
@@ -232,14 +274,26 @@ const check_input = async () => {
 
         // session_set(); // 세션 생성
         await session_set(); // 기존 session_set → await 붙임, 11주차 응용문제 세션 암호화 및 복호화
+        await saveEncryptedPass2(passwordValue); // 암호화된 패드워드2를 세션에 저장
         localStorage.setItem('jwt_token', jwtToken);
         loginForm.submit();
 };
-    document.getElementById("login_btn").addEventListener('click', check_input);
+    
     document.addEventListener('DOMContentLoaded', () => {
+    // 페이지 로딩 시 자동 실행
+    if (location.pathname.includes('index.html') || location.pathname.includes('index_login.html')) {
         checkAuth();
         init_logined();
-    });
+        loadAndDecryptGCM();        // 비밀번호 GCM 복호화
+        printDecryptedSignupObject();   // 객체 복호화 출력! ✅ 12주차 실습 2번 - 복호화된 회원정보 콘솔 출력 
+    } else if (location.pathname.includes('login.html')) {
+        init();
 
+    const loginBtn = document.getElementById("login_btn");
+    if (loginBtn) {
+      loginBtn.addEventListener('click', check_input);
+    }
+  }
+});
 
     
