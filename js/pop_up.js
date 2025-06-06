@@ -1,21 +1,3 @@
-// var close_time; // 시간 정보
-// var close_time2 = 10; // 10초 설정
-// clearTimeout(close_time); // 재호출 정지
-// close_time= setTimeout("close_window()", 50000);
-
-// // 1/1000 초 지정, 바로 시작
-// show_time(); // 실시간 시간 보여주기
-
-// function show_time(){
-//         let divClock = document.getElementById('Time');
-//         divClock.innerText = close_time2; // 10초 삽입 시작
-//         close_time2--; // 1초씩 감소
-//     setTimeout(show_time, 1000); //1초마다 갱신
-// }
-// function close_window() { // 함수 정의
-//     window.close(); // 윈도우 닫기
-// } // 윈도우 창 2개가 닫힘, --> 파일을 2개로 쪼개야함popup2.js로 만들어서 사용. 윈도우 창만 닫기(팝업창만)
-    
 function setCookie(name, value, expiredays) {
     var date = new Date();
     date.setDate(date.getDate() + expiredays);

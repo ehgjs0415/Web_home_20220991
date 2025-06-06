@@ -1,4 +1,5 @@
 // crypto2.js
+// 11주차 응용문제 해결 ! -> 세션 암호화 : 주요 기능 (1. Session_Storage_pass2로 저장 / 2. 로그인 후 복호화 구현)
 
 const SECRET_KEY = "my-super-secret-key-for-aes256!!";
 const ENCODE = new TextEncoder();

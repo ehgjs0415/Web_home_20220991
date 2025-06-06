@@ -1,3 +1,7 @@
+//9주차 응용문제 해결 -> 이메일 10글자 이하, 패스워드 15글자 이하 / 로그인 입력제한(3글자이상 반복입력x,연속되는 숫자 2개이상 반복입력x)
+//10주차 응용문제 해결 -> 로그인/로그아웃 횟수 쿠키 저장!  / 세션 스토리 로그아웃 구현하기 해결 ! -> del함수 추가 구현
+//10주차 연습문제 해결 -> login_failed()함수 구현! -> 1, 함수 구현 / 2. 실패 카운팅 / 3. 로그인 제한 / 4. 제한 상태 화면 출력
+
 import { session_set, session_get, session_check } from './session.js';
 import { encrypt_text, decrypt_text, decrypt_signup } from './crypto.js';
 import { generateJWT, checkAuth } from './jwt_token.js';
@@ -49,29 +53,27 @@ const check_xss = (input) => {
     return sanitizedInput;
     };
 
-
 function setCookie(name, value, expiredays) {
-    var date = new Date();
-    date.setDate(date.getDate() + expiredays);
-    document.cookie = escape(name) + "=" + escape(value) + "; expires=" + date.toUTCString() + "; path=/";
+    const date = new Date();
+    date.setTime(date.getTime() + (expiredays * 24 * 60 * 60 * 1000)); // expiredays는 '일' 기준
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; ${expires}; path=/`;
 }
-    
-// 수정된 getCookie 함수 (모든 이름 탐색 가능)
+
 function getCookie(name) {
-    var cookie = document.cookie;
-    if (cookie !== "") {
-        var cookie_array = cookie.split("; ");
-        for (let i in cookie_array) {
-            const [key, value] = cookie_array[i].split("=");
-            if (key === name) {
-                return unescape(value);
-            }
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArr = decodedCookie.split("; ");
+    for (let i = 0; i < cookieArr.length; i++) {
+        const [key, value] = cookieArr[i].split("=");
+        if (key === name) {
+            return value;
         }
     }
     return null;
 }
 
-// 로그인 횟수 카운트 함수 추가
+
+// 10주차 응용문제 해결 -> 로그인 횟수 카운트 함수 추가
 function login_count() {
     let count = parseInt(getCookie("login_cnt")) || 0;
     count += 1;
@@ -79,7 +81,7 @@ function login_count() {
     console.log("로그인 횟수:", count);
 }
 
-// 로그아웃 횟수 카운트 함수 추가
+// 10주차 응용문제 해결 -> 로그아웃 횟수 카운트 함수 추가
 function logout_count() {
     let count = parseInt(getCookie("logout_cnt")) || 0;
     count += 1;
@@ -87,7 +89,7 @@ function logout_count() {
     console.log("로그아웃 횟수:", count);
 }
 
-// 로그인 실패 횟수 체크 및 알림
+// 10주차 연습문제 해결 -> 로그인 실패 횟수 체크 및 알림
 function login_failed() {
     let failCnt = parseInt(getCookie("login_fail_cnt")) || 0;
     failCnt += 1;
@@ -103,12 +105,13 @@ function login_failed() {
 
 
 export function logout() {
-    logout_count(); // 로그아웃 횟수 증가
-    session_del();  // 기존 세션 삭제
+    logout_count(); // 10주차 응용문제 해결 -> 로그아웃 횟수 증가
+    session_del();  // 10주차 응용문제 해결 -> 기존 세션 삭제
     localStorage.removeItem("jwt_token"); // ✅ JWT 토큰 삭제, 11주차 응용문제 토큰 제거
     location.href = '../index.html';
 }
 
+//10주차 세션 스토리지 로그아웃 구현 -> del 함수수
 function session_del() {
     if (sessionStorage) {
         sessionStorage.clear();
@@ -141,9 +144,10 @@ function printDecryptedSignupObject() {
 
 // 11주차 세션 암호화 및 복호화 부분 응용문제에서 azync과 await 확인    
 const check_input = async () => {
+    const login_block = getCookie("login_block");
     // 로그인 차단 여부 먼저 확인
-    if (getCookie("login_block") === "true") {
-        alert("로그인 가능 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.");
+    if (login_block === "true") {
+        alert("로그인 가능 횟수를 초과했습니다. 4분간 로그인할 수 없습니다.");
         return false;
     }
 
@@ -170,7 +174,7 @@ const check_input = async () => {
             exp: Math.floor(Date.now() / 1000) + 3600 // 1시간 (3600초)
     };
     const jwtToken = generateJWT(payload);
-        
+
     if (emailValue === '') {
         alert('이메일을 입력하세요.');
         login_failed();
@@ -190,7 +194,7 @@ const check_input = async () => {
     }
 
 
-    // 이메일은 최대 10자
+    // 9주차 응용문제 해결 -> 이메일은 최대 10자
     if (emailValue.length > 10) {
         alert('이메일은 10글자 이하여야 합니다.');
         login_failed();
@@ -204,7 +208,7 @@ const check_input = async () => {
     }
 
 
-    //  비밀번호는 최대 15자    
+    //  9주차 응용문제 해결 -> 비밀번호는 최대 15자    
     if (passwordValue.length > 15) {
         alert('비밀번호는 15글자 이하여야 합니다.');
         login_failed();
@@ -227,14 +231,14 @@ const check_input = async () => {
         return false;
     }
 
-    //  반복된 문자열 (3자 이상) 금지
+    //  9주차 응용문제 해결 -> 반복된 문자열 (3자 이상) 금지
     if (/(.+)\1{2,}/.test(emailValue) || /(.+)\1{2,}/.test(passwordValue)) {
         alert('3글자 이상 반복되는 문자를 사용할 수 없습니다.');
         login_failed();
         return false;
     }
 
-    // 연속된 숫자 2개 이상 반복 금지 (예: 1212, 123123 등)
+    // 9주차 응용문제 해결 -> 연속된 숫자 2개 이상 반복 금지 (예: 1212, 123123 등)
     if (/(\d{2,})\1+/.test(emailValue) || /(\d{2,})\1+/.test(passwordValue)) {
         alert('연속된 숫자 2개 이상 반복 입력은 허용되지 않습니다.');
         login_failed();
@@ -253,7 +257,7 @@ const check_input = async () => {
         return false;
     }
     
-    // 로그인 횟수 증가
+    // 10주차 응용문제 해결 -> 로그인 횟수 증가
     login_count();
 
     // 검사 마무리 단계 쿠키 저장, 최하단 submit 이전
@@ -265,17 +269,20 @@ const check_input = async () => {
     else{ // 아이디 체크 x
         setCookie("id", emailValue.value, 0); //날짜를 0 - 쿠키 삭제
     }
-        
-   
-            
 
         console.log('이메일:', emailValue);
         console.log('비밀번호:', passwordValue);
 
         // session_set(); // 세션 생성
         await session_set(); // 기존 session_set → await 붙임, 11주차 응용문제 세션 암호화 및 복호화
-        await saveEncryptedPass2(passwordValue); // 암호화된 패드워드2를 세션에 저장
+        await saveEncryptedPass2(passwordValue); // 11주차 응용문제 해결! -> 암호화된 패드워드2를 세션에 저장
         localStorage.setItem('jwt_token', jwtToken);
+        
+    if (getCookie("login_block") === "true") {
+        alert("🚫 로그인 제한 중입니다. 다시 시도해주세요.");
+        return false;
+    }
+
         loginForm.submit();
 };
     
