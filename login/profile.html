@@ -273,6 +273,12 @@
           });
         </script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3919a3fcb176f483fc5f43fa2d5e6186&libraries=services,clusterer,drawing"></script>
-    <script type="text/javascript" src="../js/map.js"></script>
+    <script>
+      window.onload = function () {
+      const script = document.createElement('script');
+      script.src = "/javawebHW/js/map.js";  // 실제 경로 맞춰야 함
+      document.body.appendChild(script);
+    }
+</script>
     </body>
 </html>
