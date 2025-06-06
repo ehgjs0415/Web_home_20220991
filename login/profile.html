@@ -22,15 +22,15 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
         <nav class="navbar navbar-expand-lg border-bottom border-body" style="background-color: #e3f2fd;" data-bs-theme="light">
             <div class="container-fluid">
-              <img src="image/logo.png" class="img-fluid" onmouseover="over(this)" onmouseout="out(this)" width="100" height="60">
-              <a class="navbar-brand" href="login/index_login.html">홈페이지 테스트</a>
+              <img src="../image/logo.png" class="img-fluid" onmouseover="over(this)" onmouseout="out(this)" width="100" height="60">
+              <a class="navbar-brand" href="/javawebHW/login/index_login.html">홈페이지 테스트</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="login/index_login.html">메인페이지</a>
+                    <a class="nav-link active" aria-current="page" href="/javawebHW/login/index_login.html">메인페이지</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="https://www.leagueoflegends.com/ko-kr/how-to-play/">기본정보</a>
@@ -63,7 +63,7 @@
                 </form>
               </div>
             </div>
-            <a href="login/logout.html" class="btn btn-outline-success" id="logout_btn">로그아웃 하기</a>
+            <a href="/javawebHW/login/logout.html" class="btn btn-outline-success" id="logout_btn">로그아웃 하기</a>
           </nav>
         <div style="display: flex; justify-content: center;">
             <section style="background-color: #eee;">
@@ -84,7 +84,7 @@
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
-            <img src="image/Profile.jpg" alt="avatar"
+            <img src="../image/Profile.jpg" alt="avatar"
               class="rounded-circle img-fluid" style="width: 200px;"><!--13주차 응용문제 해결 -> 개인 사진으로 수정-->
             <h5 class="my-3">송도헌</h5>
             <p class="text-muted mb-1">대학생</p>
@@ -269,7 +269,7 @@
 
         <!-- 13주차 프로필 접근 제한 응용문제 -->
         <script type="module">
-          import { session_check_login_required } from "js/session.js";
+          import { session_check_login_required } from "/javawebHW/js/session.js";
           document.addEventListener('DOMContentLoaded', () => {
             session_check_login_required();
           });
