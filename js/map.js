@@ -1,3 +1,4 @@
+console.log("map.js loaded");
 if (!window.kakao || !window.kakao.maps) {
   window.addEventListener('load', () => initMap());
 } else {
