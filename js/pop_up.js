@@ -59,9 +59,9 @@ function show_clock(){
 
 //이미지 호버 기능
 function over(obj){
-    obj.src="image/logo.png";
+    obj.src="../image/logo.png";
 }
 
 function out(obj){
-    obj.src="image/logo2.jfif";
+    obj.src="../image/logo2.jfif";
 }
