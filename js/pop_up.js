@@ -59,11 +59,11 @@ function show_clock(){
 
 //이미지 호버 기능
 function over(obj){
-    obj.src="image/logo.png";
+    obj.src="/javawebHW/image/logo.png";
 }
 
 function out(obj){
-    obj.src="image/logo2.jfif";
+    obj.src="/javawebHW/image/logo2.jfif";
 }
 window.over = over;
 window.out = out;
