@@ -53,6 +53,7 @@ const check_xss = (input) => {
     return sanitizedInput;
     };
 
+
 function setCookie(name, value, expiredays) {
     const date = new Date();
     date.setTime(date.getTime() + (expiredays * 24 * 60 * 60 * 1000)); // expiredays는 '일' 기준
@@ -111,7 +112,7 @@ export function logout() {
     location.href = '../index.html';
 }
 
-//10주차 세션 스토리지 로그아웃 구현 -> del 함수수
+//10주차 세션 스토리지 로그아웃 구현 -> del 함수
 function session_del() {
     if (sessionStorage) {
         sessionStorage.clear();

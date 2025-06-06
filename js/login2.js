@@ -287,13 +287,18 @@ const check_input = async () => {
     
     document.addEventListener('DOMContentLoaded', () => {
     // 페이지 로딩 시 자동 실행
-    if (location.pathname.includes('index.html') || location.pathname.includes('index_login.html')) {
+    if (location.pathname.includes('index.html')) {
+        // 메인 페이지 진입 시에만 토큰 삭제
+        localStorage.removeItem('jwt_token'); //
+    }
+    if (location.pathname.includes('index_login.html')) {
+        // 로그인 후 인증 검사만 수행, 토큰은 유지
         checkAuth();
-        localStorage.removeItem('jwt_token');  // 11주차 토큰 로그인이후 바로 삭제 (조건 만족)
         init_logined();
-        loadAndDecryptGCM();        // 비밀번호 GCM 복호화
-        printDecryptedSignupObject();   // 객체 복호화 출력! ✅ 12주차 실습 2번 - 복호화된 회원정보 콘솔 출력 
-    } else if (location.pathname.includes('login.html')) {
+        loadAndDecryptGCM();  // 비밀번호 GCM 복호화
+        printDecryptedSignupObject(); // 객체 복호화 출력! ✅ 12주차 실습 2번 - 복호화된 회원정보 콘솔 출력
+    }
+    else if (location.pathname.includes('login.html')) {
         init();
         const loginBtn = document.getElementById("login_btn");
         if (loginBtn) {
