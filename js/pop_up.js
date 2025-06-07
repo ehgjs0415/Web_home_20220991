@@ -59,17 +59,12 @@ function show_clock(){
 
 //이미지 호버 기능
 function over(obj){
-    obj.src="/javawebHW/image/logo.png";
+    obj.src="../image/logo.png";
 }
 
 function out(obj){
-<<<<<<< HEAD
-    obj.src="/javawebHW/image/logo2.jfif";
-}
-=======
     obj.src="image/logo2.jfif";
 }
 
->>>>>>> recovery-6.7
 window.over = over;
 window.out = out;
