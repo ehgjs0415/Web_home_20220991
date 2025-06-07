@@ -63,7 +63,7 @@ function over(obj){
 }
 
 function out(obj){
-    obj.src="image/logo2.jfif";
+    obj.src="../image/logo2.jfif";
 }
 
 window.over = over;
