@@ -49,6 +49,7 @@ export function checkAuth() {
     const currentPath = location.pathname;
     if (authenticated) {
         console.log('✅ 토큰 정상');
+        alert('정상적으로 토큰이 검증되었습니다.');
     } else {
         // 이미 로그인 페이지인데 또 이동하려는 걸 방지
         if (!currentPath.includes('login.html')) {

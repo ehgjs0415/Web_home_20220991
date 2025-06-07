@@ -292,8 +292,9 @@ const check_input = async () => {
         localStorage.removeItem('jwt_token'); //
     }
     if (location.pathname.includes('index_login.html')) {
-        // 로그인 후 인증 검사만 수행, 토큰은 유지
+        // 로그인 후 인증 검사만 수행
         checkAuth();
+        localStorage.removeItem('jwt_token');
         init_logined();
         loadAndDecryptGCM();  // 비밀번호 GCM 복호화
         printDecryptedSignupObject(); // 객체 복호화 출력! ✅ 12주차 실습 2번 - 복호화된 회원정보 콘솔 출력
