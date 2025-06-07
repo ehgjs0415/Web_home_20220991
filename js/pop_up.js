@@ -30,7 +30,7 @@ function closePopup() {
 function pop_up() {
     var cookieCheck = getCookie("popupYN");
         if (cookieCheck !== "N"){
-        window.open("../popup/popup.html", "팝업테스트", "width=400, height=300, top=10, left=10");
+        window.open("/Web_home_20220991/popup/popup.html", "팝업테스트", "width=400, height=300, top=10, left=10");
     }
 }
 
@@ -59,11 +59,11 @@ function show_clock(){
 
 //이미지 호버 기능
 function over(obj){
-    obj.src="../image/logo.png";
+    obj.src="/Web_home_20220991/image/logo.png";
 }
 
 function out(obj){
-    obj.src="../image/logo2.jfif";
+    obj.src="/Web_home_20220991/image/logo2.jfif";
 }
 
 window.over = over;
