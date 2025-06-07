@@ -45,14 +45,18 @@ function isAuthenticated() { // 사용자 인증 상태 확인
     return !!payload; // 페이로드 유무로 인증 상태 판단
 }
 
-export function checkAuth() { // 인증 검사 수행
-    const authenticated = isAuthenticated(); // 한 번만 검증 호출
-    
+export function checkAuth() {
+    const authenticated = isAuthenticated();
+    const currentPath = location.pathname;
+
     if (authenticated) {
-        alert('정상적으로 토큰이 검증되었습니다.');
+        console.log('✅ 토큰 정상');
     } else {
-        alert('토큰 검증 에러!! 인증되지 않은 접근입니다.');
-        window.location.href = '../login/login.html'; // 로그인 페이지 이동
+        // 이미 로그인 페이지인데 또 이동하려는 걸 방지
+        if (!currentPath.includes('login.html')) {
+            alert('토큰 검증 에러!! 인증되지 않은 접근입니다.');
+            window.location.href = '../login/login.html';
+        }
     }
 }
     

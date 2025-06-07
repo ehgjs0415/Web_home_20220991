@@ -94,3 +94,6 @@ function over(obj){
 function out(obj){
     obj.src="image/logo2.jfif";
 }
+
+window.over = over;
+window.out = out;
