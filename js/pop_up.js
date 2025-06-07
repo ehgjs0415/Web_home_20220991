@@ -63,7 +63,13 @@ function over(obj){
 }
 
 function out(obj){
+<<<<<<< HEAD
     obj.src="/javawebHW/image/logo2.jfif";
 }
+=======
+    obj.src="image/logo2.jfif";
+}
+
+>>>>>>> recovery-6.7
 window.over = over;
 window.out = out;

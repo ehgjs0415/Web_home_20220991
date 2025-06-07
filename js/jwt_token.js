@@ -48,6 +48,13 @@ export function checkAuth() {
     const authenticated = isAuthenticated();
     const currentPath = location.pathname;
 
+<<<<<<< HEAD
+=======
+export function checkAuth() {
+    const authenticated = isAuthenticated();
+    const currentPath = location.pathname;
+
+>>>>>>> recovery-6.7
     if (authenticated) {
         console.log('✅ 토큰 정상');
     } else {
